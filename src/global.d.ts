@@ -9,3 +9,8 @@ declare module '*.json' {
   const content: string;
   export default content;
 }
+
+interface PanelFormValues {
+  keywords: string;
+  criteria: string;
+}

@@ -1,17 +1,35 @@
-import { useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+
+const keyname: string = "panelFormData";
 
 export default function Panel() {
   const model = useRef<HTMLDialogElement>(null);
+  const [formValues, setFormValues] = useState<PanelFormValues>({
+    keywords: "",
+    criteria: "",
+  });
+
+  useEffect(() => {
+    const storedData: string | null = localStorage.getItem(keyname);
+    if (storedData) {
+      const parsed: PanelFormValues = JSON.parse(storedData) as PanelFormValues;
+      setFormValues(parsed);
+    }
+  }, []);
+
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormValues({ ...formValues, [name]: value });
+  };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     model.current?.showModal();
-    // Handle form submission logic here
-    const formData = new FormData(event.currentTarget);
-    const data = Object.fromEntries(formData);
-    // Do something with the form data, e.g., send it to a server or process it locally
-    console.log(data);
-  };
+    // Save the form values to local storage
+    localStorage.setItem(keyname, JSON.stringify(formValues));
+  }; 
 
   return (
     <div className="p-4 mx-auto">
@@ -33,6 +51,8 @@ export default function Panel() {
             type="text"
             className="input w-full validator"
             placeholder="e.g., Software Engineer"
+            value={formValues.keywords}
+            onChange={onChange}
             required
             maxLength={50}
           />
@@ -49,12 +69,14 @@ export default function Panel() {
             name="criteria"
             className="textarea w-full validator"
             placeholder="e.g., 3 years experience of React"
+            value={formValues.criteria}
+            onChange={onChange}
             maxLength={1000}
             required
           ></textarea>
           <p className="label">
-            You should list all your skills and relevant experiences for
-            the best match.
+            You should list all your skills and relevant experiences for the
+            best match.
           </p>
         </fieldset>
 
