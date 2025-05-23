@@ -13,6 +13,7 @@ export default function Panel() {
     keywords: "",
     criteria: "",
   });
+  const abortController = useRef<AbortController | null>(null);
 
   useEffect(() => {
     // save form values to chrome local storage
@@ -29,11 +30,35 @@ export default function Panel() {
     setFormValues({ ...formValues, [name]: value });
   };
 
-  const handleSubmit: SubmitHandler = (e) => {
+  const onSubmit: SubmitHandler = async (e) => {
     e.preventDefault();
     model.current?.showModal();
     // read form values from state
     chrome.storage.local.set({ [keyname]: formValues });
+    abortController.current = new AbortController(); // Create a new abort controller for each jo
+    await matchJobs(abortController.current.signal); // Start the matching task
+    model.current?.close(); // Close the modal after the task is finished
+  };
+
+  const onCancel = (): void => {
+    abortController.current?.abort(); // Abort the current matching task
+    alert("Matching canceled!");
+  };
+
+  const matchJobs = async (signal: AbortSignal): Promise<void> => {
+    // Simulate a task that takes 5 seconds
+    await new Promise<void>((resolve) => {
+      const timeoutId = setTimeout(() => {
+        alert("Matching finished!");
+        resolve();
+      }, 1000); // simulation: perform the task
+
+      // Add abort handler to clean up timeout
+      signal.addEventListener("abort", () => {
+        clearTimeout(timeoutId);
+        resolve();
+      });
+    });
   };
 
   return (
@@ -47,7 +72,7 @@ export default function Panel() {
       </div>
 
       {/* Search Form */}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={onSubmit}>
         {/* Search Keywords */}
         <fieldset className="fieldset">
           <legend className="fieldset-legend">Search Keywords</legend>
@@ -119,7 +144,9 @@ export default function Panel() {
           <div className="modal-action">
             <form method="dialog">
               {/* if there is a button in form, it will close the modal */}
-              <button className="btn">Stop Matching</button>
+              <button className="btn" onClick={onCancel}>
+                Stop Matching
+              </button>
             </form>
           </div>
         </div>
