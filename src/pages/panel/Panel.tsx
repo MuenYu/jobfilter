@@ -1,4 +1,4 @@
-import { useState,useRef } from "react";
+import { useRef } from "react";
 
 export default function Panel() {
   const model = useRef<HTMLDialogElement>(null);
@@ -7,6 +7,10 @@ export default function Panel() {
     event.preventDefault();
     model.current?.showModal();
     // Handle form submission logic here
+    const formData = new FormData(event.currentTarget);
+    const data = Object.fromEntries(formData);
+    // Do something with the form data, e.g., send it to a server or process it locally
+    console.log(data);
   };
 
   return (
@@ -25,9 +29,12 @@ export default function Panel() {
         <fieldset className="fieldset">
           <legend className="fieldset-legend">Search Keywords</legend>
           <input
+            name="keywords"
             type="text"
-            className="input w-full"
+            className="input w-full validator"
             placeholder="e.g., Software Engineer"
+            required
+            maxLength={50}
           />
           <p className="label">
             The keywords will be used to search for jobs in supported job
@@ -39,8 +46,11 @@ export default function Panel() {
         <fieldset className="fieldset">
           <legend className="fieldset-legend">Match Criteria</legend>
           <textarea
-            className="textarea w-full"
+            name="criteria"
+            className="textarea w-full validator"
             placeholder="e.g., 3 years experience of React"
+            maxLength={1000}
+            required
           ></textarea>
           <p className="label">
             You should list all your skills and relevant experiences for
