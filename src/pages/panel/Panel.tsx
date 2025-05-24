@@ -15,11 +15,13 @@ export default function Panel() {
   });
 
   useEffect(() => {
-    const storedData: string | null = localStorage.getItem(keyname);
-    if (storedData) {
-      const parsed: PanelFormValues = JSON.parse(storedData) as PanelFormValues;
-      setFormValues(parsed);
-    }
+    // save form values to chrome local storage
+    chrome.storage.local.get(keyname).then((data) => {
+      if (data[keyname]) {
+        const parsed: PanelFormValues = data[keyname] as PanelFormValues;
+        setFormValues(parsed);
+      }
+    });
   }, []);
 
   const onChange: InputChangeHandler = (e) => {
@@ -30,8 +32,8 @@ export default function Panel() {
   const handleSubmit: SubmitHandler = (e) => {
     e.preventDefault();
     model.current?.showModal();
-    // Save the form values to local storage
-    localStorage.setItem(keyname, JSON.stringify(formValues));
+    // read form values from state
+    chrome.storage.local.set({ [keyname]: formValues });
   };
 
   return (
