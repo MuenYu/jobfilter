@@ -5,6 +5,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     case "fillSearchForm":
       fillSearchForm(message.keywords);
       break;
+    case "getJDCountOnCurPage":
+      sendResponse(getJDCountOnCurPage());
+      break;
   }
 });
 
@@ -29,4 +32,8 @@ async function fillSearchForm(keywords: string): Promise<void> {
   
   await slowDelay();
   submitButton.click();
+}
+
+function getJDCountOnCurPage(): number  {
+  return document.querySelectorAll('[data-card-type="JobCard"]').length;
 }

@@ -15,8 +15,11 @@ export default abstract class JobFetcher {
       await this.init();
       await slowDelay();
       await this.initSearch(keywords);
-      await slowDelay();
-      // TODO: job scanning
+
+      await slowDelay(5);
+
+      const count = await this.getJDCountOnCurPage();
+      alert(`当前页共有${count}个职位`);
     } catch (error) {
       console.error("Error initializing job search:", error);
     }
@@ -49,5 +52,12 @@ export default abstract class JobFetcher {
       action: "fillSearchForm",
       keywords: keywords,
     });
+  }
+
+  async getJDCountOnCurPage(): Promise<number> {
+    if (this.tabId === null) return 0;
+    return await chrome.tabs.sendMessage(this.tabId, {
+      action: "getJDCountOnCurPage",
+    }); 
   }
 }

@@ -7,6 +7,6 @@ export async function fastDelay(): Promise<void> {
   return delay(100, 200);
 }
 
-export async function slowDelay(): Promise<void> {
-  return delay(1000, 1500);
+export async function slowDelay(count:number = 1): Promise<void> {
+  return delay(count * 1500, count * 2000);
 }
