@@ -29,7 +29,7 @@ interface Task{
 }
 
 interface JDAnalysis {
-  similarity: number;
+  relevance: number;
   matchedKeywords: string[];
   unmatchedKeywords: string[];
 }

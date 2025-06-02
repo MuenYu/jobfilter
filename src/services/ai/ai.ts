@@ -25,16 +25,19 @@ export default abstract class AI {
     if (this.currentJob) {
       this.deadCount = 0;
       const result: JDAnalysis = await this.analyzeJD(this.currentJob.jdInfo);
-      console.log(result);
-      if (result.similarity > 0.8) {
+      if (result.relevance >= 0.8) {
         await chrome.runtime.sendMessage({
-          type: "openTab",
-          window: this.currentJob.window,
+          action: "openTab",
+          windowId: this.currentJob.window.id,
           url: this.currentJob.jdInfo.url,
         });
       }
       this.currentJob = undefined;
     }
+  }
+
+  addTask(jd: JDInfo, window: chrome.windows.Window) {
+    this.queue.push({ jdInfo: jd, window: window });
   }
 
   abstract analyzeJD(jd: JDInfo): Promise<JDAnalysis>;

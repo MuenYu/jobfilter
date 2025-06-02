@@ -2,7 +2,12 @@ import AI from "./ai";
 
 export default class Ollama extends AI {
     async analyzeJD(jd: JDInfo): Promise<JDAnalysis> {
-        throw new Error("Method not implemented.");
+        // TODO: implement analyzeJD
+        return {
+            relevance: 0.8,
+            matchedKeywords: ["java", "spring"],
+            unmatchedKeywords: ["python"],
+        }
     }
 
 }

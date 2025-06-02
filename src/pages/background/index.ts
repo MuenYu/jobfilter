@@ -5,11 +5,12 @@ chrome.sidePanel
   });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "openTab" && message.url && message.window) {
+  if (message.action === "openTab" && message.url && message.windowId) {
+    console.log(message)
     chrome.tabs.create({
       url: message.url,
       active: false,
-      windowId: message.window,
+      windowId: message.windowId,
     })
   }
 })

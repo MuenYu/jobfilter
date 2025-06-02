@@ -19,6 +19,7 @@ export default abstract class JobFetcher {
   async run(signal: AbortSignal): Promise<void> {
     try {
       await this.init();
+      if(this.window === undefined) throw new Error("Window is null");
       await slowDelay();
 
       while (true) {
@@ -29,7 +30,7 @@ export default abstract class JobFetcher {
           await this.clickJD(i);
           await slowDelay();
           const jd: JDInfo = await this.fetchJDInfo();
-
+          this.agent.addTask(jd, this.window);
         }
 
         if (!(await this.nextPage())) break;
