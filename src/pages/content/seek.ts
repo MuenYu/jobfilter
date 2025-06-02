@@ -9,8 +9,32 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     case "clickJD":
       clickJD(message.id);
       break;
+    case "fetchJDInfo":
+      sendResponse(fetchJDInfo());
+      break;
   }
 });
+
+function fetchJDInfo(): JDInfo {
+  const title = document.querySelector('h1[data-automation="job-detail-title"] a') as HTMLAnchorElement;
+  const company = document.querySelector('span[data-automation="advertiser-name"]') as HTMLSpanElement;
+  const location = document.querySelector('span[data-automation="job-detail-location"]') as HTMLSpanElement;
+  const detail = document.querySelector('div[data-automation="jobAdDetails"]') as HTMLDivElement;
+
+  if (!title || !company || !location || !detail) {
+    alert('Job detail not found')
+    throw new Error("Job detail not found");
+  }
+
+  const jdInfo: JDInfo = {
+    title: title.textContent || "",
+    company: company.textContent || "",
+    location: location.textContent || "",
+    detail: detail.textContent || "",
+    url: title.href || "",
+  };
+  return jdInfo;
+}
 
 function getJDCountOnCurPage(): number {
   return document.querySelectorAll('[data-card-type="JobCard"]').length;

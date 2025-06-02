@@ -15,6 +15,14 @@ interface PanelFormValues {
   criteria: string;
 }
 
+interface JDInfo {
+  title: string;
+  company: string;
+  location: string;
+  detail: string;
+  url: string;
+}
+
 interface JDAnalysis {
   similarity: number;
   matchedKeywords: string[];

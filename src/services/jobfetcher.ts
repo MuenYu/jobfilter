@@ -16,16 +16,18 @@ export default abstract class JobFetcher {
     try {
       await this.init();
       await slowDelay();
-      
+
       while (true) {
         const count = await this.getJDCountOnCurPage();
-        for (let i = 1;i<=count;i++) {
+        for (let i = 1; i <= count; i++) {
           if (signal.aborted) return;
           await this.clickJD(i);
           await slowDelay();
+          const jd: JDInfo = await this.fetchJDInfo();
+          console.log(jd.title, jd.company, jd.location, jd.detail, jd.url);
         }
 
-        if (!await this.nextPage()) break;
+        if (!(await this.nextPage())) break;
         await slowDelay();
       }
     } catch (error) {
@@ -33,11 +35,18 @@ export default abstract class JobFetcher {
     }
   }
 
-  async clickJD(i: number): Promise<void> {
+  async clickJD(id: number): Promise<void> {
     if (this.tabId === null) throw new Error("Tab ID is null");
     await chrome.tabs.sendMessage(this.tabId, {
       action: "clickJD",
-      id: i,
+      id: id,
+    });
+  }
+
+  async fetchJDInfo(): Promise<JDInfo> {
+    if (this.tabId === null) throw new Error("Tab ID is null");
+    return await chrome.tabs.sendMessage(this.tabId, {
+      action: "fetchJDInfo",
     });
   }
 
@@ -73,6 +82,6 @@ export default abstract class JobFetcher {
     if (this.tabId === null) throw new Error("Tab ID is null");
     return await chrome.tabs.sendMessage(this.tabId, {
       action: "nextPage",
-    })
+    });
   }
 }
