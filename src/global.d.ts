@@ -23,6 +23,11 @@ interface JDInfo {
   url: string;
 }
 
+interface Task{
+  window: chrome.windows.Window;
+  jdInfo: JDInfo;
+}
+
 interface JDAnalysis {
   similarity: number;
   matchedKeywords: string[];

@@ -1,14 +1,17 @@
 import { slowDelay } from "@src/util";
+import AI from "../ai/ai";
 
 export default abstract class JobFetcher {
   protected window: chrome.windows.Window | undefined;
   protected tabId: number | undefined;
   protected url: string;
   protected formData: PanelFormValues;
+  protected agent: AI;
 
-  constructor(formData: PanelFormValues) {
+  constructor(agent:AI, formData: PanelFormValues) {
     this.formData = formData;
     this.url = this.urlBuilder();
+    this.agent = agent;
   }
 
   abstract urlBuilder(): string;
