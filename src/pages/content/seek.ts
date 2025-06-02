@@ -6,6 +6,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     case "nextPage":
       sendResponse(nextPage());
       break;
+    case "clickJD":
+      clickJD(message.id);
+      break;
   }
 });
 
@@ -22,4 +25,12 @@ function nextPage(): boolean {
     return true;
   }
   return false;
+}
+
+function clickJD(id: number) {
+  const jobCard = document.querySelector(`#jobcard-${id}`) as HTMLElement;
+  if (jobCard) {
+    jobCard.click();
+  }
+  throw new Error("Job card not found");
 }

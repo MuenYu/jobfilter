@@ -1,4 +1,4 @@
-import { slowDelay } from "@src/util";
+import { fastDelay, slowDelay } from "@src/util";
 
 export default abstract class JobFetcher {
   protected tabId: number | null = null;
@@ -16,15 +16,29 @@ export default abstract class JobFetcher {
     try {
       await this.init();
       await slowDelay();
+      
       while (true) {
         const count = await this.getJDCountOnCurPage();
-        alert(`${count} jobs on cur page`);
+        for (let i = 1;i<=count;i++) {
+          if (signal.aborted) return;
+          await this.clickJD(i);
+          await slowDelay();
+        }
+
         if (!await this.nextPage()) break;
         await slowDelay();
       }
     } catch (error) {
-      console.error("Error initializing job search:", error);
+      console.error("Unexpected Error:", error);
     }
+  }
+
+  async clickJD(i: number): Promise<void> {
+    if (this.tabId === null) throw new Error("Tab ID is null");
+    await chrome.tabs.sendMessage(this.tabId, {
+      action: "clickJD",
+      id: i,
+    });
   }
 
   async init(): Promise<void> {
