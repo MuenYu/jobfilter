@@ -3,12 +3,14 @@ import JobFetcher from "./jobfetcher";
  * SeekFetcher class handles the automation of job searching on seek.com.au
  * It implements the JobFetcher interface to provide standardized job searching functionality
  */
-class SeekFetcher extends JobFetcher {
-  constructor() {
-    super("https://www.seek.com.au");
+export default class SeekFetcher extends JobFetcher {
+  constructor(formData: PanelFormValues) {
+    super(formData);
+  }
+
+  urlBuilder(): string {
+    return `https://www.seek.com.au/${this.formData.keywords
+      .toLowerCase()
+      .replaceAll(" ", "-")}-jobs?daterange=1`;
   }
 }
-
-const seekFetcher = new SeekFetcher();
-
-export default seekFetcher;

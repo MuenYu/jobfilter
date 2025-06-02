@@ -2,24 +2,22 @@ import { slowDelay } from "@src/util";
 
 export default abstract class JobFetcher {
   protected tabId: number | null = null;
-  protected url: string = "";
+  protected url: string;
+  protected formData: PanelFormValues;
 
-  constructor(url: string) {
-    this.url = url;
+  constructor(formData: PanelFormValues) {
+    this.formData = formData;
+    this.url = this.urlBuilder();
   }
 
-  async run(form: PanelFormValues, signal: AbortSignal): Promise<void> {
-    const { keywords, criteria } = form;
+  abstract urlBuilder(): string;
 
+  async run(signal: AbortSignal): Promise<void> {
     try {
       await this.init();
       await slowDelay();
-      await this.initSearch(keywords);
-
-      await slowDelay(5);
-
       const count = await this.getJDCountOnCurPage();
-      alert(`当前页共有${count}个职位`);
+      alert(`${count} jobs on cur page`);
     } catch (error) {
       console.error("Error initializing job search:", error);
     }
@@ -46,18 +44,10 @@ export default abstract class JobFetcher {
     });
   }
 
-  async initSearch(keywords: string): Promise<void> {
-    if (this.tabId === null) return;
-    await chrome.tabs.sendMessage(this.tabId, {
-      action: "fillSearchForm",
-      keywords: keywords,
-    });
-  }
-
   async getJDCountOnCurPage(): Promise<number> {
     if (this.tabId === null) return 0;
     return await chrome.tabs.sendMessage(this.tabId, {
       action: "getJDCountOnCurPage",
-    }); 
+    });
   }
 }
