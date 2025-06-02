@@ -1,4 +1,4 @@
-import { fastDelay, slowDelay } from "@src/util";
+import { slowDelay } from "@src/util";
 
 export default abstract class JobFetcher {
   protected tabId: number | null = null;
@@ -19,12 +19,12 @@ export default abstract class JobFetcher {
 
       while (true) {
         const count = await this.getJDCountOnCurPage();
+
         for (let i = 1; i <= count; i++) {
           if (signal.aborted) return;
           await this.clickJD(i);
           await slowDelay();
           const jd: JDInfo = await this.fetchJDInfo();
-          console.log(jd.title, jd.company, jd.location, jd.detail, jd.url);
         }
 
         if (!(await this.nextPage())) break;

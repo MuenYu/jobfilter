@@ -1,4 +1,4 @@
-import seekFetcher from "./seek";
+import seekFetcher from "./jobfetcher/seek";
 
 export default async function starter(
   form: PanelFormValues,
