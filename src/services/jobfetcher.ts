@@ -16,8 +16,12 @@ export default abstract class JobFetcher {
     try {
       await this.init();
       await slowDelay();
-      const count = await this.getJDCountOnCurPage();
-      alert(`${count} jobs on cur page`);
+      while (true) {
+        const count = await this.getJDCountOnCurPage();
+        alert(`${count} jobs on cur page`);
+        if (!await this.nextPage()) break;
+        await slowDelay();
+      }
     } catch (error) {
       console.error("Error initializing job search:", error);
     }
@@ -45,9 +49,16 @@ export default abstract class JobFetcher {
   }
 
   async getJDCountOnCurPage(): Promise<number> {
-    if (this.tabId === null) return 0;
+    if (this.tabId === null) throw new Error("Tab ID is null");
     return await chrome.tabs.sendMessage(this.tabId, {
       action: "getJDCountOnCurPage",
     });
+  }
+
+  async nextPage(): Promise<boolean> {
+    if (this.tabId === null) throw new Error("Tab ID is null");
+    return await chrome.tabs.sendMessage(this.tabId, {
+      action: "nextPage",
+    })
   }
 }
