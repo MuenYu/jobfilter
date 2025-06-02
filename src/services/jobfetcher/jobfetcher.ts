@@ -1,7 +1,8 @@
 import { slowDelay } from "@src/util";
 
 export default abstract class JobFetcher {
-  protected tabId: number | null = null;
+  protected window: chrome.windows.Window | undefined;
+  protected tabId: number | undefined;
   protected url: string;
   protected formData: PanelFormValues;
 
@@ -25,6 +26,7 @@ export default abstract class JobFetcher {
           await this.clickJD(i);
           await slowDelay();
           const jd: JDInfo = await this.fetchJDInfo();
+
         }
 
         if (!(await this.nextPage())) break;
@@ -36,7 +38,7 @@ export default abstract class JobFetcher {
   }
 
   async clickJD(id: number): Promise<void> {
-    if (this.tabId === null) throw new Error("Tab ID is null");
+    if (this.tabId === undefined) throw new Error("Tab ID is null");
     await chrome.tabs.sendMessage(this.tabId, {
       action: "clickJD",
       id: id,
@@ -44,7 +46,7 @@ export default abstract class JobFetcher {
   }
 
   async fetchJDInfo(): Promise<JDInfo> {
-    if (this.tabId === null) throw new Error("Tab ID is null");
+    if (this.tabId === undefined) throw new Error("Tab ID is null");
     return await chrome.tabs.sendMessage(this.tabId, {
       action: "fetchJDInfo",
     });
@@ -62,8 +64,9 @@ export default abstract class JobFetcher {
           focused: false,
         },
         (window) => {
+          this.window = window;
           if (window && window.tabs && window.tabs[0]) {
-            this.tabId = window.tabs[0].id || null;
+            this.tabId = window.tabs[0].id || undefined;
             resolve();
           }
         }
@@ -72,14 +75,14 @@ export default abstract class JobFetcher {
   }
 
   async getJDCountOnCurPage(): Promise<number> {
-    if (this.tabId === null) throw new Error("Tab ID is null");
+    if (this.tabId === undefined) throw new Error("Tab ID is null");
     return await chrome.tabs.sendMessage(this.tabId, {
       action: "getJDCountOnCurPage",
     });
   }
 
   async nextPage(): Promise<boolean> {
-    if (this.tabId === null) throw new Error("Tab ID is null");
+    if (this.tabId === undefined) throw new Error("Tab ID is null");
     return await chrome.tabs.sendMessage(this.tabId, {
       action: "nextPage",
     });
