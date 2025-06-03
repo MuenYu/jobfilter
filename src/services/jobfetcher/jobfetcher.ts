@@ -1,17 +1,14 @@
 import { slowDelay } from "@src/util";
-import AI from "../ai/ai";
 
 export default abstract class JobFetcher {
-  protected window: chrome.windows.Window | undefined;
+  protected windowId: number | undefined;
   protected tabId: number | undefined;
   protected url: string;
   protected formData: PanelFormValues;
-  protected agent: AI;
 
-  constructor(agent:AI, formData: PanelFormValues) {
+  constructor(formData: PanelFormValues) {
     this.formData = formData;
     this.url = this.urlBuilder();
-    this.agent = agent;
   }
 
   abstract urlBuilder(): string;
@@ -19,7 +16,7 @@ export default abstract class JobFetcher {
   async run(signal: AbortSignal): Promise<void> {
     try {
       await this.init();
-      if(this.window === undefined) throw new Error("Window is null");
+      if (this.windowId === undefined) throw new Error("Window is null");
       await slowDelay();
 
       while (true) {
@@ -30,7 +27,13 @@ export default abstract class JobFetcher {
           await this.clickJD(i);
           await slowDelay();
           const jd: JDInfo = await this.fetchJDInfo();
-          this.agent.addTask(jd, this.window);
+          await chrome.runtime.sendMessage({
+            action: "analyzeJD",
+            task: {
+              jdInfo: jd,
+              windowId: this.windowId,
+            },
+          });
         }
 
         if (!(await this.nextPage())) break;
@@ -68,7 +71,7 @@ export default abstract class JobFetcher {
           focused: false,
         },
         (window) => {
-          this.window = window;
+          this.windowId = window?.id;
           if (window && window.tabs && window.tabs[0]) {
             this.tabId = window.tabs[0].id || undefined;
             resolve();

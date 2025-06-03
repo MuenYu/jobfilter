@@ -1,6 +1,6 @@
-import AI from "./ai";
+import Agent from "./agent";
 
-export default class Ollama extends AI {
+export default class OllamaAgent extends Agent {
     async analyzeJD(jd: JDInfo): Promise<JDAnalysis> {
         // TODO: implement analyzeJD
         return {
@@ -9,5 +9,4 @@ export default class Ollama extends AI {
             unmatchedKeywords: ["python"],
         }
     }
-
 }

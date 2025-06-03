@@ -24,7 +24,7 @@ interface JDInfo {
 }
 
 interface Task{
-  window: chrome.windows.Window;
+  windowId: number;
   jdInfo: JDInfo;
 }
 
@@ -32,4 +32,9 @@ interface JDAnalysis {
   relevance: number;
   matchedKeywords: string[];
   unmatchedKeywords: string[];
+}
+
+interface TaskQueue {
+  queue: Task[];
+  currentJob: Task | undefined;
 }
