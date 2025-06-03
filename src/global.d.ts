@@ -26,12 +26,12 @@ interface JDInfo {
 interface Task{
   windowId: number;
   jdInfo: JDInfo;
+  criteria: string;
 }
 
 interface JDAnalysis {
-  relevance: number;
-  matchedKeywords: string[];
-  unmatchedKeywords: string[];
+  apply: boolean;
+  reason: string;
 }
 
 interface TaskQueue {

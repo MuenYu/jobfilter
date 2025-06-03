@@ -48,10 +48,8 @@ export default function Panel() {
   };
 
   const matchJobs = async (signal: AbortSignal): Promise<void> => {
-    const seek:JobFetcher = new SeekFetcher(formValues);
-    await Promise.all([
-      seek.run(signal)
-    ]);
+    const seek: JobFetcher = new SeekFetcher(formValues);
+    await Promise.all([seek.run(signal)]);
   };
 
   return (
@@ -95,11 +93,11 @@ export default function Panel() {
             value={formValues.criteria}
             onChange={onChange}
             maxLength={1000}
+            rows={15}
             required
           ></textarea>
           <p className="label">
-            You should list all your skills and relevant experiences for the
-            best match.
+            Matching criteria for all scanned jobs. List your necessary and better-to-have criteria separatedly for maximum match.
           </p>
         </fieldset>
 

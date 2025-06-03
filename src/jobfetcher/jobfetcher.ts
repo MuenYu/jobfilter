@@ -32,6 +32,7 @@ export default abstract class JobFetcher {
             task: {
               jdInfo: jd,
               windowId: this.windowId,
+              criteria: this.formData.criteria,
             },
           });
         }

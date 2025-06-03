@@ -17,9 +17,12 @@
   },
   "type": "module",
   "dependencies": {
+    "ollama": "^0.5.16",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "webextension-polyfill": "^0.12.0"
+    "webextension-polyfill": "^0.12.0",
+    "zod": "^3.25.49",
+    "zod-to-json-schema": "^3.24.5"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.32",
