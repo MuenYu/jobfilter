@@ -1,3 +1,5 @@
+import JobFetcher from "@src/jobfetcher/jobfetcher";
+import SeekFetcher from "@src/jobfetcher/seek";
 import { useState, useRef, useEffect } from "react";
 
 const keyname: string = "panelFormData";
@@ -13,6 +15,7 @@ export default function Panel() {
     keywords: "",
     criteria: "",
   });
+  const abortController = useRef<AbortController | null>(null);
 
   useEffect(() => {
     // save form values to chrome local storage
@@ -29,11 +32,24 @@ export default function Panel() {
     setFormValues({ ...formValues, [name]: value });
   };
 
-  const handleSubmit: SubmitHandler = (e) => {
+  const onSubmit: SubmitHandler = async (e) => {
     e.preventDefault();
     model.current?.showModal();
     // read form values from state
     chrome.storage.local.set({ [keyname]: formValues });
+    abortController.current = new AbortController(); // Create a new abort controller for each jo
+    await matchJobs(abortController.current.signal); // Start the matching task
+    model.current?.close(); // Close the modal after the task is finished
+  };
+
+  const onCancel = (): void => {
+    abortController.current?.abort(); // Abort the current matching task
+    alert("Matching canceled!");
+  };
+
+  const matchJobs = async (signal: AbortSignal): Promise<void> => {
+    const seek: JobFetcher = new SeekFetcher(formValues);
+    await Promise.all([seek.run(signal)]);
   };
 
   return (
@@ -47,7 +63,7 @@ export default function Panel() {
       </div>
 
       {/* Search Form */}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={onSubmit}>
         {/* Search Keywords */}
         <fieldset className="fieldset">
           <legend className="fieldset-legend">Search Keywords</legend>
@@ -77,11 +93,11 @@ export default function Panel() {
             value={formValues.criteria}
             onChange={onChange}
             maxLength={1000}
+            rows={15}
             required
           ></textarea>
           <p className="label">
-            You should list all your skills and relevant experiences for the
-            best match.
+            Matching criteria for all scanned jobs. List your necessary and better-to-have criteria separatedly for maximum match.
           </p>
         </fieldset>
 
@@ -119,7 +135,9 @@ export default function Panel() {
           <div className="modal-action">
             <form method="dialog">
               {/* if there is a button in form, it will close the modal */}
-              <button className="btn">Stop Matching</button>
+              <button className="btn" onClick={onCancel}>
+                Stop Matching
+              </button>
             </form>
           </div>
         </div>

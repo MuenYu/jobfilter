@@ -16,6 +16,7 @@
   "permissions": [
     "storage",
     "activeTab",
+    "tabs",
     "sidePanel"
   ],
   "side_panel": {
@@ -24,15 +25,10 @@
   "content_scripts": [
     {
       "matches": [
-        "http://*/*",
-        "https://*/*",
-        "<all_urls>"
+        "https://www.seek.com.au/*"
       ],
       "js": [
-        "src/pages/content/global.ts"
-      ],
-      "css": [
-        "contentStyle.css"
+        "src/pages/content/seek.ts"
       ]
     }
   ],
