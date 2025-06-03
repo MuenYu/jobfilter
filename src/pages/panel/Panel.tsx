@@ -1,4 +1,5 @@
-import controller from "@src/services/controller";
+import JobFetcher from "@src/jobfetcher/jobfetcher";
+import SeekFetcher from "@src/jobfetcher/seek";
 import { useState, useRef, useEffect } from "react";
 
 const keyname: string = "panelFormData";
@@ -47,7 +48,10 @@ export default function Panel() {
   };
 
   const matchJobs = async (signal: AbortSignal): Promise<void> => {
-    await controller(formValues, signal);
+    const seek:JobFetcher = new SeekFetcher(formValues);
+    await Promise.all([
+      seek.run(signal)
+    ]);
   };
 
   return (
