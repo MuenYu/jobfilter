@@ -6,6 +6,7 @@ import JobFetcher from "./jobfetcher";
 export default class SeekFetcher extends JobFetcher {
   constructor(formData: PanelFormValues) {
     super(formData);
+    this.platform = "seek";
   }
 
   urlBuilder(): string {

@@ -5,6 +5,7 @@ export default abstract class JobFetcher {
   protected tabId: number | undefined;
   protected url: string;
   protected formData: PanelFormValues;
+  protected platform: string | undefined;
 
   constructor(formData: PanelFormValues) {
     this.formData = formData;
@@ -50,6 +51,7 @@ export default abstract class JobFetcher {
     await chrome.tabs.sendMessage(this.tabId, {
       action: "clickJD",
       id: id,
+      platform: this.platform,
     });
   }
 
@@ -57,6 +59,7 @@ export default abstract class JobFetcher {
     if (this.tabId === undefined) throw new Error("Tab ID is null");
     return await chrome.tabs.sendMessage(this.tabId, {
       action: "fetchJDInfo",
+      platform: this.platform,
     });
   }
 
@@ -86,6 +89,7 @@ export default abstract class JobFetcher {
     if (this.tabId === undefined) throw new Error("Tab ID is null");
     return await chrome.tabs.sendMessage(this.tabId, {
       action: "getJDCountOnCurPage",
+      platform: this.platform,
     });
   }
 
@@ -93,6 +97,7 @@ export default abstract class JobFetcher {
     if (this.tabId === undefined) throw new Error("Tab ID is null");
     return await chrome.tabs.sendMessage(this.tabId, {
       action: "nextPage",
+      platform: this.platform,
     });
   }
 }

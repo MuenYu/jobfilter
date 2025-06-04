@@ -28,7 +28,7 @@
         "https://www.seek.com.au/*"
       ],
       "js": [
-        "src/pages/content/seek.ts"
+        "src/pages/content/index.ts"
       ]
     }
   ],
