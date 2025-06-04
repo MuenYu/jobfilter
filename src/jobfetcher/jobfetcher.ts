@@ -64,25 +64,18 @@ export default abstract class JobFetcher {
   }
 
   async init(): Promise<void> {
-    return new Promise((resolve) => {
-      chrome.windows.create(
-        {
-          url: this.url,
-          type: "normal",
-          state: "normal",
-          width: 1600,
-          height: 900,
-          focused: false,
-        },
-        (window) => {
-          this.windowId = window?.id;
-          if (window && window.tabs && window.tabs[0]) {
-            this.tabId = window.tabs[0].id || undefined;
-            resolve();
-          }
-        }
-      );
+    const window = await chrome.windows.create({
+      url: this.url,
+      type: "normal",
+      state: "normal",
+      width: 1600,
+      height: 900,
+      focused: false,
     });
+    const tab = window.tabs?.[0];
+    if (!window || !tab) throw new Error("Window or tab is null");
+    this.windowId = window.id;
+    this.tabId = tab.id;
   }
 
   async getJDCountOnCurPage(): Promise<number> {
