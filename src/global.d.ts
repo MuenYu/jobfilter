@@ -30,7 +30,7 @@ interface Task{
 }
 
 interface JDAnalysis {
-  apply: boolean;
+  match: boolean;
   reason: string;
 }
 

@@ -1,7 +1,7 @@
 export default abstract class Agent {
   async run(task: Task): Promise<void> {
     const result: JDAnalysis = await this.analyzeJD(task);
-    if (result.apply) {
+    if (result.match) {
       chrome.tabs.create({
         url: task.jdInfo.url,
         active: false,
@@ -13,18 +13,18 @@ export default abstract class Agent {
 
   promptBuilder(task: Task): string {
     return `
-    You are a job filter tool.
-    You need to decide wether the candidate should apply for the job, according to the job description and the matching criteria.
-
-    Job description:
-    \`\`\`md
-    ## ${task.jdInfo.title}
-    ${task.jdInfo.detail}
+    Read and analyze the provided Job Description carefully. Determine if it meets all the following requirements: 
+    
+    Requirements:
     \`\`\`
-
-    Matching criteria:
-    \`\`\`md
     ${task.criteria}
+    \`\`\`
+    
+    Job description:
+    \`\`\`
+    ${task.jdInfo.title} at ${task.jdInfo.company} in ${task.jdInfo.location}
+
+    ${task.jdInfo.detail}
     \`\`\`
   `;
   }

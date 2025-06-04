@@ -97,7 +97,7 @@ export default function Panel() {
             required
           ></textarea>
           <p className="label">
-            Matching criteria for all scanned jobs. List your necessary and better-to-have criteria separatedly for maximum match.
+            Matching criteria for all scanned jobs. List only necessary conditions to maximize your job match.
           </p>
         </fieldset>
 

@@ -5,7 +5,7 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
 
 export default class OllamaAgent extends Agent {
   apiUrl: string = "http://localhost:11434/api/chat";
-  model: string = "qwen3:32b";
+  model: string = "qwen3:14b";
 
   async analyzeJD(task: Task): Promise<JDAnalysis> {
     const resp = await ollama.generate({
@@ -18,6 +18,6 @@ export default class OllamaAgent extends Agent {
 }
 
 const template = z.object({
-    apply: z.boolean().describe('wether the candidate should apply for the job'),
+    match: z.boolean().describe('true: if all the requirements are met, false: otherwise'),
     reason: z.string().describe('the reason for your decision in short'),
 })

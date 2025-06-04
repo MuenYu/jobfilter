@@ -27,10 +27,10 @@ function fetchJDInfo(): JDInfo {
   }
 
   const jdInfo: JDInfo = {
-    title: title.textContent || "",
-    company: company.textContent || "",
-    location: location.textContent || "",
-    detail: detail.textContent || "",
+    title: title.innerText || "",
+    company: company.innerText || "",
+    location: location.innerText || "",
+    detail: detail.innerText || "",
     url: title.href || "",
   };
   return jdInfo;
