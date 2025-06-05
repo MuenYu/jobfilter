@@ -12,6 +12,7 @@ export default class OllamaAgent extends Agent {
       model: this.model,
       prompt: this.promptBuilder(task),
       format: zodToJsonSchema(template),
+      keep_alive: 1800
     })
     return JSON.parse(resp.response) as JDAnalysis;
   }
