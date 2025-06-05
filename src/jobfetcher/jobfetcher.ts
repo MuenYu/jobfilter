@@ -1,4 +1,5 @@
 import { slowDelay } from "@src/util";
+import { analyzeJD } from "./ollama";
 
 export default abstract class JobFetcher {
   protected windowId: number | undefined;
@@ -31,14 +32,19 @@ export default abstract class JobFetcher {
           await slowDelay();
           const jd: JDInfo = await this.fetchJDInfo();
           if (jd) {
-            await chrome.runtime.sendMessage({
-              action: "analyzeJD",
-              task: {
-                jdInfo: jd,
+            const task: Task = {
+              jdInfo: jd,
+              criteria: this.formData.criteria,
+            };
+            const result: JDAnalysis = await analyzeJD(task);
+            console.log(result);
+            if (result.match) {
+              await chrome.tabs.create({
+                url: jd.url,
+                active: false,
                 windowId: this.windowId,
-                criteria: this.formData.criteria,
-              },
-            });
+              });
+            }
           }
         }
 

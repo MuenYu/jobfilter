@@ -24,7 +24,6 @@ interface JDInfo {
 }
 
 interface Task{
-  windowId: number;
   jdInfo: JDInfo;
   criteria: string;
 }
