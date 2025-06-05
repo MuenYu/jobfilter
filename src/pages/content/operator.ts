@@ -3,4 +3,5 @@ export default abstract class Operator {
   abstract nextPage(): boolean;
   abstract clickJD(id: number): void;
   abstract fetchJDInfo(): JDInfo;
+  goToFooter(){}
 }

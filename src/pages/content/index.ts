@@ -1,8 +1,10 @@
+import Linkedin from "./linkedin";
 import Operator from "./operator";
 import Seek from "./seek";
 
 const mapping: { [key: string]: Operator } = {
   seek: new Seek(),
+  linkedin: new Linkedin(),
 };
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -20,6 +22,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         break;
       case "fetchJDInfo":
         sendResponse(operator.fetchJDInfo());
+        break;
+      case "goToFooter":
+        operator.goToFooter();
         break;
     }
   }

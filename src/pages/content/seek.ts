@@ -49,7 +49,8 @@ export default class Seek extends Operator {
     const jobCard = document.querySelector(`#jobcard-${id}`) as HTMLElement;
     if (jobCard) {
       jobCard.click();
+    }else {
+      throw new Error("Job card not found");
     }
-    throw new Error("Job card not found");
   }
 }

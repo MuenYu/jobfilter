@@ -18,9 +18,11 @@ export default abstract class JobFetcher {
     try {
       await this.init();
       if (this.windowId === undefined) throw new Error("Window is null");
-      await slowDelay();
 
       while (true) {
+        await slowDelay(2);
+        await this.goToFooter();
+        await slowDelay();
         const count = await this.getJDCountOnCurPage();
 
         for (let i = 1; i <= count; i++) {
@@ -28,18 +30,19 @@ export default abstract class JobFetcher {
           await this.clickJD(i);
           await slowDelay();
           const jd: JDInfo = await this.fetchJDInfo();
-          await chrome.runtime.sendMessage({
-            action: "analyzeJD",
-            task: {
-              jdInfo: jd,
-              windowId: this.windowId,
-              criteria: this.formData.criteria,
-            },
-          });
+          if (jd) {
+            await chrome.runtime.sendMessage({
+              action: "analyzeJD",
+              task: {
+                jdInfo: jd,
+                windowId: this.windowId,
+                criteria: this.formData.criteria,
+              },
+            });
+          }
         }
 
         if (!(await this.nextPage())) break;
-        await slowDelay();
       }
     } catch (error) {
       console.error("Unexpected Error:", error);
@@ -90,6 +93,14 @@ export default abstract class JobFetcher {
     if (this.tabId === undefined) throw new Error("Tab ID is null");
     return await chrome.tabs.sendMessage(this.tabId, {
       action: "nextPage",
+      platform: this.platform,
+    });
+  }
+
+  async goToFooter(): Promise<void> {
+    if (this.tabId === undefined) throw new Error("Tab ID is null");
+    await chrome.tabs.sendMessage(this.tabId, {
+      action: "goToFooter",
       platform: this.platform,
     });
   }

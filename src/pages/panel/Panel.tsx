@@ -1,4 +1,5 @@
 import JobFetcher from "@src/jobfetcher/jobfetcher";
+import LinkedinFetcher from "@src/jobfetcher/linkedin";
 import SeekFetcher from "@src/jobfetcher/seek";
 import { useState, useRef, useEffect } from "react";
 
@@ -49,7 +50,8 @@ export default function Panel() {
 
   const matchJobs = async (signal: AbortSignal): Promise<void> => {
     const seek: JobFetcher = new SeekFetcher(formValues);
-    await Promise.all([seek.run(signal)]);
+    const linekdin: JobFetcher = new LinkedinFetcher(formValues);
+    await Promise.all([seek.run(signal), linekdin.run(signal)]);
   };
 
   return (
@@ -97,7 +99,8 @@ export default function Panel() {
             required
           ></textarea>
           <p className="label">
-            Matching criteria for all scanned jobs. List only necessary conditions to maximize your job match.
+            Matching criteria for all scanned jobs. List only necessary
+            conditions to maximize your job match.
           </p>
         </fieldset>
 
