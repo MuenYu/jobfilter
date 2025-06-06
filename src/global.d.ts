@@ -23,7 +23,7 @@ interface JDInfo {
   url: string;
 }
 
-interface Task{
+interface Task {
   jdInfo: JDInfo;
   criteria: string;
 }
