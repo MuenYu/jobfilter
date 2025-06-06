@@ -21,7 +21,7 @@ export default abstract class JobFetcher {
       if (this.windowId === undefined) throw new Error("Window is null");
 
       while (true) {
-        await slowDelay(2);
+        await slowDelay();
         await this.goToFooter();
         await slowDelay();
         const count = await this.getJDCountOnCurPage();
@@ -85,6 +85,15 @@ export default abstract class JobFetcher {
     if (!window || !tab) throw new Error("Window or tab is null");
     this.windowId = window.id;
     this.tabId = tab.id;
+
+    return new Promise((resolve) => {
+      if (this.tabId === undefined) throw new Error("Tab ID is null");
+      chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+        if (tabId === this.tabId && changeInfo.status === "complete") {
+          resolve();
+        }
+      });
+    });
   }
 
   async getJDCountOnCurPage(): Promise<number> {
