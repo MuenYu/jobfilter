@@ -1,20 +1,28 @@
-import ollama from "ollama/browser";
+import { Ollama } from "ollama/browser";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 
-const model: string = "qwen3:14b";
 const template = z.object({
-    match: z.boolean().describe('true: if all the requirements are met, false: otherwise'),
-    reason: z.string().describe('the reason for your decision in short'),
-})
+  match: z
+    .boolean()
+    .describe("true: if all the requirements are met, false: otherwise"),
+  reason: z.string().describe("the reason for your decision in short"),
+});
 
 export async function analyzeJD(task: Task): Promise<JDAnalysis> {
-    const resp = await ollama.generate({
-        model: model,
-        prompt: promptBuilder(task),
-        format: zodToJsonSchema(template),
-    })
-    return JSON.parse(resp.response) as JDAnalysis;
+  const { settings } = (await chrome.storage.local.get("settings")) as {
+    settings: Settings;
+  };
+  const url: string = settings?.ollamaUrl || "http://localhost:11434";
+  const model: string = settings?.ollamaModel || "qwen3:14b";
+  const client: Ollama = new Ollama({ host: url });
+
+  const resp = await client.generate({
+    model: model,
+    prompt: promptBuilder(task),
+    format: zodToJsonSchema(template),
+  });
+  return JSON.parse(resp.response) as JDAnalysis;
 }
 
 function promptBuilder(task: Task): string {

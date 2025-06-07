@@ -15,6 +15,11 @@ interface PanelFormValues {
   criteria: string;
 }
 
+interface Settings {
+  ollamaUrl: string;
+  ollamaModel: string;
+}
+
 interface JDInfo {
   title: string;
   company: string;
@@ -23,7 +28,7 @@ interface JDInfo {
   url: string;
 }
 
-interface Task{
+interface Task {
   jdInfo: JDInfo;
   criteria: string;
 }

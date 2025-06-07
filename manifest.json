@@ -3,7 +3,8 @@
   "name": "jobfilter",
   "description": "A browser extension fetching jobs whose JD aligns with your skillset, filtering through ollama.",
   "options_ui": {
-    "page": "src/pages/options/index.html"
+    "page": "src/pages/options/index.html",
+    "open_in_tab": true
   },
   "action": {
     "default_icon": {
