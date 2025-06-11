@@ -7,6 +7,7 @@ export default abstract class JobFetcher {
   protected url: string;
   protected formData: PanelFormValues;
   protected platform: string | undefined;
+  protected setting: Settings | undefined;
 
   constructor(formData: PanelFormValues) {
     this.formData = formData;

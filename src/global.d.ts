@@ -16,6 +16,8 @@ interface PanelFormValues {
 }
 
 interface Settings {
+  linkedinDatePosted: string;
+  seekDatePosted: string;
   ollamaUrl: string;
   ollamaModel: string;
 }
