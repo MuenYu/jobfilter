@@ -1,12 +1,17 @@
 import Operator from "./operator";
 
 export default class Linkedin extends Operator {
-  getJDCountOnCurPage(): number {
+  async getJDCountOnCurPage(): Promise<number> {
     if (this.isNoMatch()) return 0;
+
+    const list = document.querySelector(
+      ".scaffold-layout__list > div"
+    ) as HTMLElement;
+    await this.scrollTo(list, 10, 10);
     return document.querySelectorAll('div[data-view-name="job-card"]').length;
   }
 
-  nextPage(): boolean {
+  async nextPage(): Promise<boolean> {
     if (this.isNoMatch()) return false;
     const nextPageButton = document.querySelector(
       ".jobs-search-pagination__button--next"
@@ -18,7 +23,7 @@ export default class Linkedin extends Operator {
     return false;
   }
 
-  clickJD(id: number): void {
+  async clickJD(id: number) {
     const jobList = document.querySelectorAll(
       'div[data-view-name="job-card"]'
     ) as NodeListOf<HTMLDivElement>;
@@ -29,7 +34,7 @@ export default class Linkedin extends Operator {
     }
   }
 
-  fetchJDInfo(): JDInfo {
+  async fetchJDInfo(): Promise<JDInfo> {
     const title = document.querySelector(
       ".job-details-jobs-unified-top-card__job-title a"
     ) as HTMLAnchorElement;
@@ -59,12 +64,5 @@ export default class Linkedin extends Operator {
   // if no match, linkedin will still show recommened jobs, so we need to check if the banner is shown
   isNoMatch(): boolean {
     return document.querySelector(".jobs-search-no-results-banner") !== null;
-  }
-
-  goToFooter(): void {
-    const footer = document.querySelector(
-      "#jobs-search-results-footer"
-    ) as HTMLDivElement;
-    footer.scrollIntoView({ behavior: "smooth" });
   }
 }

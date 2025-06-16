@@ -10,22 +10,26 @@ const mapping: { [key: string]: Operator } = {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.platform && mapping[message.platform]) {
     const operator = mapping[message.platform];
-    switch (message.action) {
-      case "getJDCountOnCurPage":
-        sendResponse(operator.getJDCountOnCurPage());
-        break;
-      case "nextPage":
-        sendResponse(operator.nextPage());
-        break;
-      case "clickJD":
-        operator.clickJD(message.id);
-        break;
-      case "fetchJDInfo":
-        sendResponse(operator.fetchJDInfo());
-        break;
-      case "goToFooter":
-        operator.goToFooter();
-        break;
-    }
+
+    const handleAsync = async () => {
+      switch (message.action) {
+        case "getJDCountOnCurPage":
+          sendResponse(await operator.getJDCountOnCurPage());
+          break;
+        case "nextPage":
+          sendResponse(await operator.nextPage());
+          break;
+        case "clickJD":
+          await operator.clickJD(message.id);
+          sendResponse(true);
+          break;
+        case "fetchJDInfo":
+          sendResponse(await operator.fetchJDInfo());
+          break;
+      }
+    };
+
+    handleAsync();
+    return true; // keep the channel until sendResponse is called
   }
 });
