@@ -22,8 +22,6 @@ export default abstract class JobFetcher {
 
       while (true) {
         await slowDelay();
-        await this.goToFooter();
-        await slowDelay();
         const count = await this.getJDCountOnCurPage();
 
         for (let i = 1; i <= count; i++) {
@@ -108,14 +106,6 @@ export default abstract class JobFetcher {
     if (this.tabId === undefined) throw new Error("Tab ID is null");
     return await chrome.tabs.sendMessage(this.tabId, {
       action: "nextPage",
-      platform: this.platform,
-    });
-  }
-
-  async goToFooter(): Promise<void> {
-    if (this.tabId === undefined) throw new Error("Tab ID is null");
-    await chrome.tabs.sendMessage(this.tabId, {
-      action: "goToFooter",
       platform: this.platform,
     });
   }

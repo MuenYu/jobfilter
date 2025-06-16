@@ -1,7 +1,14 @@
 export default abstract class Operator {
-  abstract getJDCountOnCurPage(): number;
-  abstract nextPage(): boolean;
-  abstract clickJD(id: number): void;
-  abstract fetchJDInfo(): JDInfo;
-  goToFooter(){}
+  abstract getJDCountOnCurPage(): Promise<number>;
+  abstract nextPage(): Promise<boolean>;
+  abstract clickJD(id: number): Promise<void>;
+  abstract fetchJDInfo(): Promise<JDInfo>;
+  
+  async scrollTo(scrollable: HTMLElement, step: number, interval: number) {
+    const scrollHeight = scrollable.scrollHeight;
+    for (let i = 0; i < scrollHeight; i += step) {
+      scrollable.scrollTop = i;
+      await new Promise((resolve) => setTimeout(resolve, interval));
+    }
+  }
 }

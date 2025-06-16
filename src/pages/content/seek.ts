@@ -1,7 +1,7 @@
 import Operator from "./operator";
 
 export default class Seek extends Operator {
-  fetchJDInfo(): JDInfo {
+  async fetchJDInfo(): Promise<JDInfo> {
     const title = document.querySelector(
       'h1[data-automation="job-detail-title"] a'
     ) as HTMLAnchorElement;
@@ -30,11 +30,11 @@ export default class Seek extends Operator {
     return jdInfo;
   }
 
-  getJDCountOnCurPage(): number {
+  async getJDCountOnCurPage(): Promise<number> {
     return document.querySelectorAll('[data-card-type="JobCard"]').length;
   }
 
-  nextPage(): boolean {
+  async nextPage(): Promise<boolean> {
     const nextPageButton = document.querySelector(
       'a[aria-label="Next"][aria-hidden="false"]'
     ) as HTMLAnchorElement;
@@ -45,11 +45,11 @@ export default class Seek extends Operator {
     return false;
   }
 
-  clickJD(id: number) {
+  async clickJD(id: number) {
     const jobCard = document.querySelector(`#jobcard-${id}`) as HTMLElement;
     if (jobCard) {
       jobCard.click();
-    }else {
+    } else {
       throw new Error("Job card not found");
     }
   }
