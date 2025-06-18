@@ -21,7 +21,8 @@
     "sidePanel"
   ],
   "side_panel": {
-    "default_path": "src/pages/panel/index.html"
+    "default_path": "src/pages/panel/index.html",
+    "open_panel_on_action_click": true
   },
   "content_scripts": [
     {
