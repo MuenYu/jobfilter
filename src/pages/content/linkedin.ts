@@ -8,7 +8,8 @@ export default class Linkedin extends Operator {
       ".scaffold-layout__list > div"
     ) as HTMLElement;
     await this.scrollTo(list, 10, 10);
-    return document.querySelectorAll('div[data-view-name="job-card"]').length;
+    // TODO: change it to items only in list
+    return list.querySelectorAll('div[data-view-name="job-card"]').length;
   }
 
   async nextPage(): Promise<boolean> {
@@ -23,18 +24,24 @@ export default class Linkedin extends Operator {
     return false;
   }
 
-  async clickJD(id: number) {
+  async clickJD(id: number): Promise<Boolean> {
     const jobList = document.querySelectorAll(
       'div[data-view-name="job-card"]'
     ) as NodeListOf<HTMLDivElement>;
-    if (id <= jobList.length) {
-      jobList[id - 1].click();
-    } else {
-      throw new Error("Job not found");
-    }
+    const jobCard = jobList[id - 1] as HTMLDivElement;
+    if (!jobCard) return false;
+    const stateBlcok = jobCard.querySelector(
+      ".job-card-list__footer-wrapper"
+    ) as HTMLElement;
+    if (!stateBlcok) return false;
+    const stateText: string = stateBlcok.innerText;
+    if (stateText.includes("Viewed") || stateText.includes("Applied"))
+      return false;
+    jobCard.click();
+    return true;
   }
 
-  async fetchJDInfo(): Promise<JDInfo> {
+  async fetchJDInfo(): Promise<JDInfo | null> {
     const title = document.querySelector(
       ".job-details-jobs-unified-top-card__job-title a"
     ) as HTMLAnchorElement;
@@ -47,8 +54,7 @@ export default class Linkedin extends Operator {
     const detail = document.querySelector("#job-details") as HTMLElement;
 
     if (!title || !company || !location || !detail) {
-      alert(`Job detail not found`);
-      throw new Error("Job detail not found");
+      return null;
     }
 
     const jdInfo: JDInfo = {
