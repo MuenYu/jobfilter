@@ -20,8 +20,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           sendResponse(await operator.nextPage());
           break;
         case "clickJD":
-          await operator.clickJD(message.id);
-          sendResponse(true);
+          sendResponse(await operator.clickJD(message.id));
           break;
         case "fetchJDInfo":
           sendResponse(await operator.fetchJDInfo());

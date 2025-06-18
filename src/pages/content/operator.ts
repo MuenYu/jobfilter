@@ -1,8 +1,8 @@
 export default abstract class Operator {
   abstract getJDCountOnCurPage(): Promise<number>;
   abstract nextPage(): Promise<boolean>;
-  abstract clickJD(id: number): Promise<void>;
-  abstract fetchJDInfo(): Promise<JDInfo>;
+  abstract clickJD(id: number): Promise<Boolean>;
+  abstract fetchJDInfo(): Promise<JDInfo|null>;
   
   async scrollTo(scrollable: HTMLElement, step: number, interval: number) {
     const scrollHeight = scrollable.scrollHeight;

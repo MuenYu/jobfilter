@@ -26,26 +26,29 @@ export default abstract class JobFetcher {
 
         for (let i = 1; i <= count; i++) {
           if (signal.aborted) return;
-          await this.clickJD(i);
+          const notViewed = await this.clickJD(i);
+          if (!notViewed) continue;
+
           await slowDelay();
-          const jd: JDInfo = await this.fetchJDInfo();
-          if (jd) {
-            const task: Task = {
-              jdInfo: jd,
-              criteria: this.formData.criteria,
-            };
-            const result: JDAnalysis = await analyzeJD(task);
-            console.log(result);
-            if (result.match) {
-              await chrome.tabs.create({
-                url: jd.url,
-                active: false,
-                windowId: this.windowId,
-              });
-            }
+          const jd: JDInfo | null = await this.fetchJDInfo();
+          if (!jd) {
+            console.log("JD not found");
+            continue;
+          }
+          const task: Task = {
+            jdInfo: jd,
+            criteria: this.formData.criteria,
+          };
+          const result: JDAnalysis = await analyzeJD(task);
+          console.log(result);
+          if (result.match) {
+            await chrome.tabs.create({
+              url: jd.url,
+              active: false,
+              windowId: this.windowId,
+            });
           }
         }
-
         if (!(await this.nextPage())) break;
       }
     } catch (error) {
@@ -53,16 +56,16 @@ export default abstract class JobFetcher {
     }
   }
 
-  async clickJD(id: number): Promise<void> {
+  async clickJD(id: number): Promise<Boolean> {
     if (this.tabId === undefined) throw new Error("Tab ID is null");
-    await chrome.tabs.sendMessage(this.tabId, {
+    return await chrome.tabs.sendMessage(this.tabId, {
       action: "clickJD",
       id: id,
       platform: this.platform,
     });
   }
 
-  async fetchJDInfo(): Promise<JDInfo> {
+  async fetchJDInfo(): Promise<JDInfo | null> {
     if (this.tabId === undefined) throw new Error("Tab ID is null");
     return await chrome.tabs.sendMessage(this.tabId, {
       action: "fetchJDInfo",
